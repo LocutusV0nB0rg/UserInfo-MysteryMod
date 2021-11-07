@@ -1,0 +1,7 @@
+{
+  "name" : "UserInfoAddon",
+  "version" : "1.0.0",
+  "description" : "This Addon provides information about users",
+  "authors"  : ["kyleonaut"],
+  "mainClass" : "de.kyleonaut.userinfo.UserInfoAddon"
+}
