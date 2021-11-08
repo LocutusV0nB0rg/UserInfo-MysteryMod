@@ -58,7 +58,7 @@ subprojects {
 
   project.ext {
     // CHANGE THIS
-    archivesName = "mod-addon"
+    archivesName = "userinfo-addon"
     modVersion = "0.2.11+build.1023"
     jarIncludes = ["mystery-mod-addon"]
     // CHANGE THIS

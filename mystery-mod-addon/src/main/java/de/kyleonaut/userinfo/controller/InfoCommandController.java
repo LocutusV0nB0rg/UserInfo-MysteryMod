@@ -1,5 +1,6 @@
 package de.kyleonaut.userinfo.controller;
 
+import de.kyleonaut.userinfo.entity.ListUser;
 import de.kyleonaut.userinfo.entity.MojangUser;
 import de.kyleonaut.userinfo.repository.MojangRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,10 @@ import net.mysterymod.mod.MysteryMod;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -39,7 +44,7 @@ public class InfoCommandController {
       try {
         final MojangUser body = mojangRepository.getMojangUserByName(args[1]).execute().body();
         if (body == null) {
-          MysteryMod.getInstance().getMinecraft().addChatMessage("§8[§6UserInfo§8] §7Der Spieler §e"+args[1]+"§7 konnte nicht gefunden werden.");
+          MysteryMod.getInstance().getMinecraft().addChatMessage("§8[§6UserInfo§8] §7Der Spieler §e" + args[1] + "§7 konnte nicht gefunden werden.");
           return;
         }
         final MojangUser mojangUser = userController.formatMojangUser(body);
@@ -50,6 +55,16 @@ public class InfoCommandController {
           (userController.isScammer(UUID.fromString(mojangUser.getId())) ? "§aJa" : "§cNein"));
         MysteryMod.getInstance().getMinecraft().addChatMessage("§7Trusted-Middleman:§e " +
           (userController.isTrustedMM(UUID.fromString(mojangUser.getId())) ? "§aJa" : "§cNein"));
+
+        MysteryMod.getInstance().getMinecraft().addChatMessage("§7Namensänderungen: ");
+        final List<ListUser> listUsers = mojangRepository.getNames(UUID.fromString(mojangUser.getId())).execute().body();
+        for (ListUser listUser : listUsers) {
+          String date = "Original";
+          if (listUser.getChangedToAt() != 0L){
+            date = DateTimeFormatter.ofPattern("dd.MM.YYYY").format(new Timestamp(listUser.getChangedToAt()).toLocalDateTime());
+          }
+          MysteryMod.getInstance().getMinecraft().addChatMessage("§7-§e " + listUser.getName() + "§7 " + date);
+        }
         MysteryMod.getInstance().getMinecraft().addChatMessage("§8§m                                §r§8[§6UserInfo§8]§m                                ");
       } catch (IOException e) {
         MysteryMod.getInstance().getMinecraft().addChatMessage("§8[§6UserInfo§8] §7Der Mojang Server ist zur Zeit nicht erreichbar.");
