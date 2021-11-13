@@ -4,7 +4,6 @@ import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
 
-
 buildscript {
   repositories {
     maven {
@@ -35,14 +34,30 @@ subprojects {
     }
   }
 
+  configurations {
+    embed
+    compile.extendsFrom embed
+  }
+
+  jar {
+    from {
+      duplicatesStrategy DuplicatesStrategy.EXCLUDE
+      configurations.embed.collect {
+        it.isDirectory() ? it : zipTree(it)
+      }
+    }
+
+    exclude 'META-INF/*.RSA'
+    exclude 'META-INF/*.SF'
+  }
+
+
   dependencies {
     compile fileTree(dir: "${rootDir}/libs", include: ['*.jar'])
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.0'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-jackson:2.9.0'
+    embed 'com.squareup.retrofit2:retrofit:2.9.0'
+    embed 'com.squareup.retrofit2:converter-gson:2.9.0'
   }
 
   compileJava {
@@ -96,7 +111,6 @@ task buildJars {
   versions.each { mcVersion ->
     println("Creating dev version for: " + mcVersion)
     dependsOn ':jars:' + mcVersion + ':devBuild'
-
   }
 
   versions.each { mcVersion ->
@@ -110,7 +124,7 @@ task buildJars {
 task copyJars {
   group = "mysterymod"
 
-  versions.each {mcVersion ->
+  versions.each { mcVersion ->
     copy(mcVersion, true, version, "addon", rootDir)
     copy(mcVersion, false, version, "addon", rootDir)
   }

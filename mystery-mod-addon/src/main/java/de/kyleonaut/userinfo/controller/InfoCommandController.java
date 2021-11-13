@@ -12,7 +12,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
@@ -58,10 +57,15 @@ public class InfoCommandController {
 
         MysteryMod.getInstance().getMinecraft().addChatMessage("§7Namensänderungen: ");
         final List<ListUser> listUsers = mojangRepository.getNames(UUID.fromString(mojangUser.getId())).execute().body();
+        if (listUsers == null) {
+          MysteryMod.getInstance().getMinecraft().addChatMessage("§7-§e " + mojangUser.getName() + "§7 Original");
+          MysteryMod.getInstance().getMinecraft().addChatMessage("§8§m                                §r§8[§6UserInfo§8]§m                                ");
+          return;
+        }
         for (ListUser listUser : listUsers) {
-          String date = "Original";
-          if (listUser.getChangedToAt() != 0L){
-            date = DateTimeFormatter.ofPattern("dd.MM.YYYY").format(new Timestamp(listUser.getChangedToAt()).toLocalDateTime());
+          String date = "§7Original";
+          if (listUser.getChangedToAt() != 0L) {
+            date = DateTimeFormatter.ofPattern("dd.MM.yyyy").format(new Timestamp(listUser.getChangedToAt()).toLocalDateTime());
           }
           MysteryMod.getInstance().getMinecraft().addChatMessage("§7-§e " + listUser.getName() + "§7 " + date);
         }

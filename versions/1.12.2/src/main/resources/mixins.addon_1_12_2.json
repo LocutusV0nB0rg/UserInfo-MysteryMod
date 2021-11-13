@@ -5,6 +5,6 @@
   "refmap": "mixins.refmap.json",
   "minVersion": "0.7",
   "mixins": [
-    "TestMixin"
+
   ]
 }

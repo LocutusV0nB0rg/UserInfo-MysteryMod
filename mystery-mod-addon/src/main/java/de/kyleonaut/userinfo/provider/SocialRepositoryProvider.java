@@ -4,7 +4,7 @@ package de.kyleonaut.userinfo.provider;
 import com.google.inject.Provider;
 import de.kyleonaut.userinfo.repository.SocialRepository;
 import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * @author kyleonaut
@@ -16,7 +16,7 @@ public class SocialRepositoryProvider implements Provider<SocialRepository> {
   public SocialRepository get() {
     return new Retrofit.Builder()
       .baseUrl("http://newh1ve.de:8080/")
-      .addConverterFactory(JacksonConverterFactory.create())
+      .addConverterFactory(GsonConverterFactory.create())
       .build().create(SocialRepository.class);
   }
 }

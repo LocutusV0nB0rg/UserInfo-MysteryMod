@@ -3,7 +3,7 @@ package de.kyleonaut.userinfo.provider;
 import com.google.inject.Provider;
 import de.kyleonaut.userinfo.repository.MojangRepository;
 import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * @author kyleonaut
@@ -15,7 +15,7 @@ public class MojangRepositoryProvider implements Provider<MojangRepository> {
   public MojangRepository get() {
     return new Retrofit.Builder()
       .baseUrl("https://api.mojang.com/")
-      .addConverterFactory(JacksonConverterFactory.create())
+      .addConverterFactory(GsonConverterFactory.create())
       .build().create(MojangRepository.class);
   }
 }
